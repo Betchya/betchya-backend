@@ -6,29 +6,23 @@ on:
       - 'dev/**'
   workflow_dispatch:
 
-jobs: 
-  setup:
-    runs-on: ubuntu-latest
+
     
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - run: echo "Connecting to Project with ID ---> $PROJECT_ID"
       - run: supabase link --project-ref $PROJECT_ID
-    
-  deploy:
-    runs-on: ubuntu-latest
-    
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-
-    steps:
       - run: supabase migration up
 
 
