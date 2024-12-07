@@ -20,9 +20,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - run: supabase start
+      #- run: supabse start
       - run: supabase link --project-ref $PROJECT_ID
-      - run: supabase db reset
       - run: supabase db pull
       - run: supabase db push
 
