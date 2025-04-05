@@ -3,7 +3,10 @@ name: Development Worfklow
 on:
   push:
     branches:
-      - 'dev/**'
+      - 'feature/*'
+      - 'bugfix/*'
+      - 'hotfix/*'
+      - 'main'
   workflow_dispatch:
 
 jobs: 
