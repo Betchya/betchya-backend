@@ -24,5 +24,5 @@ jobs:
       - run: supabase link --project-ref $PROJECT_ID
       - run: supabase migration list
       # - run: supabase db diff --linked --debug
-      #- run: supabase db push
-      #- run: supabase migration list
+      - run: supabase db push
+      - run: supabase migration list
