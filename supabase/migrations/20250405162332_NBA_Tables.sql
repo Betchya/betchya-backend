@@ -11,7 +11,7 @@ CREATE TABLE NBA.Teams (
     Conference VARCHAR(20), -- e.g., "Western"
     Division VARCHAR(20), -- e.g., "Pacific"
     Active BOOLEAN DEFAULT TRUE, -- Indicates if the team is currently active
-    RecordLastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of the last update with UTC timezone
+    RecordLastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp of the last update with UTC timezone
 );
 
 -- Sportsdata.io recommends rerfreshing this table every 4 hours
