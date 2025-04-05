@@ -116,5 +116,5 @@ CREATE TABLE NBA.Projections (
     CONSTRAINT fk_game FOREIGN KEY (GameID) REFERENCES NBA.Games(GameID),
     CONSTRAINT fk_player FOREIGN KEY (PlayerID) REFERENCES NBA.Players(PlayerID),
     CONSTRAINT fk_team FOREIGN KEY (TeamID) REFERENCES NBA.Teams(TeamID),
-    CONSTRAINT unique_game_player UNIQUE (GameID, PlayerID) -- One projection per player per game
+    CONSTRAINT unique_projection_game_player UNIQUE (GameID, PlayerID) -- One projection per player per game
 );
