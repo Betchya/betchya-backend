@@ -3,7 +3,7 @@ name: Staging Workflow
 on:
   push:
     branches:
-      - '*-maintenance'  # Matches branches in the format of <major>.<minor>-maintenance
+      - '*.*-maintenance'  # Matches branches in the format of <major>.<minor>-maintenance
   workflow_dispatch:
 
 
