@@ -1,178 +1,178 @@
 begin;
 select plan(27); -- Adjust the number based on the total number of tests
 
--- Test for NBA.Teams table
+-- Test for nba.teams table
 SELECT has_column(
-    'NBA',
-    'Teams',
-    'TeamID',
-    'TeamID should exist in NBA.Teams'
+    'nba',
+    'teams',
+    'teamid',
+    'teamid should exist in nba.teams'
 );
 SELECT has_column(
-    'NBA',
-    'Teams',
-    'TeamName',
-    'TeamName should exist in NBA.Teams'
+    'nba',
+    'teams',
+    'teamname',
+    'teamname should exist in nba.teams'
 );
 SELECT has_column(
-    'NBA',
-    'Teams',
-    'City',
-    'City should exist in NBA.Teams'
+    'nba',
+    'teams',
+    'city',
+    'city should exist in nba.teams'
 );
 SELECT has_column(
-    'NBA',
-    'Teams',
-    'Conference',
-    'Conference should exist in NBA.Teams'
-);
-
--- Test for NBA.Players table
-SELECT has_column(
-    'NBA',
-    'Players',
-    'PlayerID',
-    'PlayerID should exist in NBA.Players'
-);
-SELECT has_column(
-    'NBA',
-    'Players',
-    'PlayerName',
-    'PlayerName should exist in NBA.Players'
-);
-SELECT has_column(
-    'NBA',
-    'Players',
-    'TeamID',
-    'TeamID should exist in NBA.Players'
-);
-SELECT has_column(
-    'NBA',
-    'Players',
-    'Position',
-    'Position should exist in NBA.Players'
+    'nba',
+    'teams',
+    'conference',
+    'conference should exist in nba.teams'
 );
 
--- Test for NBA.Games table
+-- Test for nba.players table
 SELECT has_column(
-    'NBA',
-    'Games',
-    'GameID',
-    'GameID should exist in NBA.Games'
+    'nba',
+    'players',
+    'playerid',
+    'playerid should exist in nba.players'
 );
 SELECT has_column(
-    'NBA',
-    'Games',
-    'GameDateTime',
-    'GameDateTime should exist in NBA.Games'
+    'nba',
+    'players',
+    'playername',
+    'playername should exist in nba.players'
 );
 SELECT has_column(
-    'NBA',
-    'Games',
-    'HomeTeamID',
-    'HomeTeamID should exist in NBA.Games'
+    'nba',
+    'players',
+    'teamid',
+    'teamid should exist in nba.players'
 );
 SELECT has_column(
-    'NBA',
-    'Games',
-    'AwayTeamID',
-    'AwayTeamID should exist in NBA.Games'
-);
-
--- Test for NBA.BoxScores table
-SELECT has_column(
-    'NBA',
-    'BoxScores',
-    'BoxScoreID',
-    'BoxScoreID should exist in NBA.BoxScores'
-);
-SELECT has_column(
-    'NBA',
-    'BoxScores',
-    'GameID',
-    'GameID should exist in NBA.BoxScores'
-);
-SELECT has_column(
-    'NBA',
-    'BoxScores',
-    'PlayerID',
-    'PlayerID should exist in NBA.BoxScores'
-);
-SELECT has_column(
-    'NBA',
-    'BoxScores',
-    'Points',
-    'Points should exist in NBA.BoxScores'
-);
-SELECT has_column(
-    'NBA',
-    'BoxScores',
-    'Rebounds',
-    'Rebounds should exist in NBA.BoxScores'
+    'nba',
+    'players',
+    'position',
+    'position should exist in nba.players'
 );
 
--- Test for NBA.PlayerGameStats table
+-- Test for nba.games table
 SELECT has_column(
-    'NBA',
-    'PlayerGameStats',
-    'StatID',
-    'StatID should exist in NBA.PlayerGameStats'
+    'nba',
+    'games',
+    'gameid',
+    'gameid should exist in nba.games'
 );
 SELECT has_column(
-    'NBA',
-    'PlayerGameStats',
-    'GameID',
-    'GameID should exist in NBA.PlayerGameStats'
+    'nba',
+    'games',
+    'gamedatetime',
+    'gamedatetime should exist in nba.games'
 );
 SELECT has_column(
-    'NBA',
-    'PlayerGameStats',
-    'PlayerID',
-    'PlayerID should exist in NBA.PlayerGameStats'
+    'nba',
+    'games',
+    'hometeamid',
+    'hometeamid should exist in nba.games'
 );
 SELECT has_column(
-    'NBA',
-    'PlayerGameStats',
-    'Points',
-    'Points should exist in NBA.PlayerGameStats'
-);
-SELECT has_column(
-    'NBA',
-    'PlayerGameStats',
-    'Assists',
-    'Assists should exist in NBA.PlayerGameStats'
+    'nba',
+    'games',
+    'awayteamid',
+    'awayteamid should exist in nba.games'
 );
 
--- Test for NBA.Projections table
+-- Test for nba.boxscores table
 SELECT has_column(
-    'NBA',
-    'Projections',
-    'ProjectionID',
-    'ProjectionID should exist in NBA.Projections'
+    'nba',
+    'boxscores',
+    'boxscoreid',
+    'boxscoreid should exist in nba.boxscores'
 );
 SELECT has_column(
-    'NBA',
-    'Projections',
-    'PlayerID',
-    'PlayerID should exist in NBA.Projections'
+    'nba',
+    'boxscores',
+    'gameid',
+    'gameid should exist in nba.boxscores'
 );
 SELECT has_column(
-    'NBA',
-    'Projections',
-    'ProjectedPoints',
-    'ProjectedPoints should exist in NBA.Projections'
+    'nba',
+    'boxscores',
+    'playerid',
+    'playerid should exist in nba.boxscores'
 );
 SELECT has_column(
-    'NBA',
-    'Projections',
-    'ProjectedRebounds',
-    'ProjectedRebounds should exist in NBA.Projections'
+    'nba',
+    'boxscores',
+    'points',
+    'points should exist in nba.boxscores'
 );
 SELECT has_column(
-    'NBA',
-    'Projections',
-    'ProjectedAssists',
-    'ProjectedAssists should exist in NBA.Projections'
+    'nba',
+    'boxscores',
+    'rebounds',
+    'rebounds should exist in nba.boxscores'
+);
+
+-- Test for nba.playergamestats table
+SELECT has_column(
+    'nba',
+    'playergamestats',
+    'statid',
+    'statid should exist in nba.playergamestats'
+);
+SELECT has_column(
+    'nba',
+    'playergamestats',
+    'gameid',
+    'gameid should exist in nba.playergamestats'
+);
+SELECT has_column(
+    'nba',
+    'playergamestats',
+    'playerid',
+    'playerid should exist in nba.playergamestats'
+);
+SELECT has_column(
+    'nba',
+    'playergamestats',
+    'points',
+    'points should exist in nba.playergamestats'
+);
+SELECT has_column(
+    'nba',
+    'playergamestats',
+    'assists',
+    'assists should exist in nba.playergamestats'
+);
+
+-- Test for nba.projections table
+SELECT has_column(
+    'nba',
+    'projections',
+    'projectionid',
+    'projectionid should exist in nba.projections'
+);
+SELECT has_column(
+    'nba',
+    'projections',
+    'playerid',
+    'playerid should exist in nba.projections'
+);
+SELECT has_column(
+    'nba',
+    'projections',
+    'projectedpoints',
+    'projectedpoints should exist in nba.projections'
+);
+SELECT has_column(
+    'nba',
+    'projections',
+    'projectedrebounds',
+    'projectedrebounds should exist in nba.projections'
+);
+SELECT has_column(
+    'nba',
+    'projections',
+    'projectedassists',
+    'projectedassists should exist in nba.projections'
 );
 
 rollback;
