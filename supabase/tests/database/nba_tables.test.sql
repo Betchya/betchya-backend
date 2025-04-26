@@ -1,5 +1,5 @@
 begin;
-select plan(50); -- Adjust the number based on the total number of tests
+select plan(67); -- Adjust the number based on the total number of tests
 
 -- Test for nba.teams table
 SELECT has_column('nba', 'teams', 'teamid', 'teamid should exist in nba.teams');
