@@ -1,5 +1,5 @@
 begin;
-select plan(30); -- Adjust the number based on the total number of tests
+select plan(27); -- Adjust the number based on the total number of tests
 
 -- Test for NBA.Teams table
 SELECT has_column(
