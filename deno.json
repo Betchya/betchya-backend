@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "lib": ["deno.ns", "deno.unstable"],
+      "types": ["https://deno.land/x/supabase_edge_functions/types.ts"]
+    },
+    "importMap": "./import_map.json"
+  }
+  
