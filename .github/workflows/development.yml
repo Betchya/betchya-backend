@@ -3,7 +3,10 @@ name: Development Worfklow
 on:
   push:
     branches:
-      - 'dev/**'
+      - 'feature/*'
+      - 'bugfix/*'
+      - 'hotfix/*'
+      - 'main'
   workflow_dispatch:
 
 jobs: 
@@ -16,12 +19,13 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DEV_DB_PASSWORD }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
       # -run: supabase start
       - run: supabase link --project-ref $PROJECT_ID
       - run: supabase migration list
+      # - run: supabase db diff --linked --debug
       - run: supabase db push
       - run: supabase migration list

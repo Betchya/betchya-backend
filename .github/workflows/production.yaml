@@ -3,7 +3,7 @@ name: Production Workflow
 on:
   push:
     branches:
-      - 'releases/**'
+      - 'release/v*.*.*' # Matches release branches in the format of release/v<major>.<minor>.<patch>
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
