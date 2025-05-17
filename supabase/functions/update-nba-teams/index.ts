@@ -2,19 +2,44 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from 'https://deno.land/std@0.192.0/http/server.ts';
 
-// Create Supabase client using environment variables
-const supabase = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-);
+// Supabase client is now created inside the handler, per Supabase best practices.
 
-// SportsData.io API configuration
+// Types for SportsData.io NBA Team response
+interface SportsDataTeam {
+  TeamID: number;
+  Key: string;
+  City: string;
+  Name: string;
+  Conference: string;
+  Division: string;
+  Active: boolean;
+}
+
+export interface TeamUpsertData {
+  TeamID: number;
+  TeamAbbreviation: string;
+  City: string;
+  TeamName: string;
+  Conference: string;
+  Division: string;
+  Active: boolean;
+  RecordLastUpdated: string;
+}
+
 const SPORTS_DATA_NBA_API_KEY = Deno.env.get('SPORTS_DATA_NBA_API_KEY') ?? '';
 const NBA_TEAMS_API_URL = 'https://api.sportsdata.io/v3/nba/scores/json/teams';
 
-// Validate the shape and types of a team object
-function isValidTeam(team: any): boolean {
+export function isValidTeam(team: unknown): team is SportsDataTeam {
   return (
+    typeof team === 'object' &&
+    team !== null &&
+    'TeamID' in team &&
+    'Key' in team &&
+    'City' in team &&
+    'Name' in team &&
+    'Conference' in team &&
+    'Division' in team &&
+    'Active' in team &&
     typeof team.TeamID === 'number' &&
     typeof team.Key === 'string' &&
     typeof team.City === 'string' &&
@@ -25,8 +50,7 @@ function isValidTeam(team: any): boolean {
   );
 }
 
-// Transform SportsData.io team format to our database format
-function transformTeam(team: any): any {
+export function transformTeam(team: SportsDataTeam): TeamUpsertData {
   return {
     TeamID: team.TeamID,
     TeamAbbreviation: team.Key,
@@ -39,48 +63,74 @@ function transformTeam(team: any): any {
   };
 }
 
-// Handle HTTP requests
-serve(async (_req) => {
+// Extracted main logic for easier unit testing
+export async function updateNbaTeams(
+  fetchTeams: () => Promise<unknown[]>,
+  upsertFn: (teams: TeamUpsertData[]) => Promise<{ error: { message: string } | null }>
+): Promise<Response> {
   try {
-    // Fetch teams from SportsData.io
-    const response = await fetch(NBA_TEAMS_API_URL, {
-      headers: {
-        'Ocp-Apim-Subscription-Key': SPORTS_DATA_NBA_API_KEY,
-      },
-    });
+    const teamsRaw = await fetchTeams();
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch NBA teams: ${response.statusText}`);
+    if (!Array.isArray(teamsRaw)) {
+      console.error('Invalid API response: expected array of teams');
+      return new Response('Invalid API response: expected array of teams', { status: 500 });
     }
 
-    const teams = await response.json();
-
-    // Validate API response
-    if (!Array.isArray(teams)) {
-      throw new Error('Invalid API response: expected array of teams');
+    // Type-safe filter and collect invalids
+    const validTeams: SportsDataTeam[] = [];
+    const invalidTeams: unknown[] = [];
+    for (const team of teamsRaw) {
+      if (isValidTeam(team)) {
+        validTeams.push(team);
+      } else {
+        invalidTeams.push(team);
+      }
     }
 
-    const invalid = teams.filter((team) => !isValidTeam(team));
-    if (invalid.length > 0) {
-      throw new Error(`Invalid team data received from API: ${JSON.stringify(invalid[0])}`);
+    if (invalidTeams.length > 0) {
+      console.error('Invalid team data received from API:', invalidTeams[0]);
+      return new Response(`Invalid team data received from API: ${JSON.stringify(invalidTeams[0])}`, { status: 500 });
     }
 
-    // Transform data to our format
-    const upsertData = teams.map(transformTeam);
+    const upsertData = validTeams.map(transformTeam);
 
-    // Upsert into Supabase
-    const { error } = await supabase.from('NBA.Teams').upsert(upsertData, {
-      onConflict: 'TeamID',
-    });
+    const { error } = await upsertFn(upsertData);
 
     if (error) {
-      throw error;
+      console.error('Supabase upsert error:', error);
+      return new Response(`Database error: ${error.message}`, { status: 500 });
     }
 
     return new Response('NBA teams updated successfully.', { status: 200 });
-
   } catch (err) {
-    console.error('Error:', err);
-    return new Response(`Failed to update NBA teams: ${err.message}`, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('Unexpected error:', err);
+    return new Response(`Failed to update NBA teams: ${message}`, { status: 500 });
   }
-});
+}
+
+// Edge handler uses updateNbaTeams with real fetch and Supabase
+if (import.meta.main) {
+  serve((_req) => {
+    return updateNbaTeams(
+      async () => {
+        const response = await fetch(NBA_TEAMS_API_URL, {
+          headers: {
+            'Ocp-Apim-Subscription-Key': SPORTS_DATA_NBA_API_KEY,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch NBA teams: ${response.status} ${response.statusText}`);
+        }
+        return await response.json();
+      },
+      async (upsertData) => {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+        return await supabase.from('NBA.Teams').upsert(upsertData, { onConflict: 'TeamID' });
+      }
+    );
+  });
+}
