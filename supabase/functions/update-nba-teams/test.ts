@@ -54,15 +54,36 @@ Deno.test("updateNbaTeams returns 200 for valid teams and no db error", async ()
 });
 
 Deno.test("updateNbaTeams returns 500 for DB error", async () => {
-  const fetchTeams = async () => await [validTeam];
-  const upsertFn = async (_teams: TeamUpsertData[]) => await ({ error: { message: "db fail" } });
+  const fetchTeams = async () => [validTeam];
+  const upsertFn = async (_teams: TeamUpsertData[]) => ({ error: { message: "db fail" } });
   const res = await updateNbaTeams(fetchTeams, upsertFn);
   assertEquals(res.status, 500);
 });
 
 Deno.test("updateNbaTeams returns 500 for invalid team", async () => {
-  const fetchTeams = async () => await [invalidTeam];
-  const upsertFn = async (_teams: TeamUpsertData[]) => await ({ error: null });
+  const fetchTeams = async () => [invalidTeam];
+  const upsertFn = async (_teams: TeamUpsertData[]) => ({ error: null });
+  const res = await updateNbaTeams(fetchTeams, upsertFn);
+  assertEquals(res.status, 500);
+});
+
+Deno.test("updateNbaTeams returns 500 for non-array API response", async () => {
+  const fetchTeams = async () => ({ not: 'an array' } as unknown as unknown[]);
+  const upsertFn = async (_teams: TeamUpsertData[]) => ({ error: null });
+  const res = await updateNbaTeams(fetchTeams, upsertFn);
+  assertEquals(res.status, 500);
+});
+
+Deno.test("updateNbaTeams returns 500 if fetchTeams throws", async () => {
+  const fetchTeams = async () => { throw new Error("fetch fail"); };
+  const upsertFn = async (_teams: TeamUpsertData[]) => ({ error: null });
+  const res = await updateNbaTeams(fetchTeams, upsertFn);
+  assertEquals(res.status, 500);
+});
+
+Deno.test("updateNbaTeams returns 500 if upsertFn throws", async () => {
+  const fetchTeams = async () => [validTeam];
+  const upsertFn = async (_teams: TeamUpsertData[]) => { throw new Error("upsert fail"); };
   const res = await updateNbaTeams(fetchTeams, upsertFn);
   assertEquals(res.status, 500);
 });
