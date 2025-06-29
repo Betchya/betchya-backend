@@ -16,18 +16,18 @@ interface SportsDataTeam {
 }
 
 export interface TeamUpsertData {
-  TeamID: number;
-  TeamAbbreviation: string;
-  City: string;
-  TeamName: string;
-  Conference: string;
-  Division: string;
-  Active: boolean;
-  RecordLastUpdated: string;
+  teamid: number;
+  teamabbreviation: string;
+  city: string;
+  teamname: string;
+  conference: string;
+  division: string;
+  active: boolean;
+  recordlastupdated: string;
 }
 
-const SPORTS_DATA_NBA_API_KEY = Deno.env.get('SPORTS_DATA_NBA_API_KEY') ?? '';
-const NBA_TEAMS_API_URL = 'https://api.sportsdata.io/v3/nba/scores/json/teams';
+// const SPORTS_DATA_NBA_API_KEY = Deno.env.get('SPORTS_DATA_NBA_API_KEY') ?? '';
+const NBA_TEAMS_API_URL = `https://api.sportsdata.io/v3/nba/scores/json/AllTeams?key=469421ea871a488eb5f670116668a83d`;
 
 export function isValidTeam(team: unknown): team is SportsDataTeam {
   return (
@@ -40,26 +40,26 @@ export function isValidTeam(team: unknown): team is SportsDataTeam {
     'Conference' in team &&
     'Division' in team &&
     'Active' in team &&
-    typeof team.TeamID === 'number' &&
-    typeof team.Key === 'string' &&
-    typeof team.City === 'string' &&
-    typeof team.Name === 'string' &&
-    typeof team.Conference === 'string' &&
-    typeof team.Division === 'string' &&
-    typeof team.Active === 'boolean'
+    typeof (team as any).TeamID === 'number' &&
+    typeof (team as any).Key === 'string' &&
+    typeof (team as any).City === 'string' &&
+    typeof (team as any).Name === 'string' &&
+    typeof (team as any).Conference === 'string' &&
+    typeof (team as any).Division === 'string' &&
+    typeof (team as any).Active === 'boolean'
   );
 }
 
 export function transformTeam(team: SportsDataTeam): TeamUpsertData {
   return {
-    TeamID: team.TeamID,
-    TeamAbbreviation: team.Key,
-    City: team.City,
-    TeamName: team.Name,
-    Conference: team.Conference,
-    Division: team.Division,
-    Active: team.Active,
-    RecordLastUpdated: new Date().toISOString(),
+    teamid: team.TeamID,
+    teamabbreviation: team.Key,
+    city: team.City,
+    teamname: team.Name,
+    conference: team.Conference,
+    division: team.Division,
+    active: team.Active,
+    recordlastupdated: new Date().toISOString(),
   };
 }
 
@@ -76,20 +76,11 @@ export async function updateNbaTeams(
       return new Response('Invalid API response: expected array of teams', { status: 500 });
     }
 
-    // Type-safe filter and collect invalids
-    const validTeams: SportsDataTeam[] = [];
-    const invalidTeams: unknown[] = [];
-    for (const team of teamsRaw) {
-      if (isValidTeam(team)) {
-        validTeams.push(team);
-      } else {
-        invalidTeams.push(team);
-      }
-    }
-
-    if (invalidTeams.length > 0) {
-      console.error('Invalid team data received from API:', invalidTeams[0]);
-      return new Response(`Invalid team data received from API: ${JSON.stringify(invalidTeams[0])}`, { status: 500 });
+    // Strictly filter out invalid teams
+    const validTeams = teamsRaw.filter(isValidTeam);
+    if (validTeams.length === 0) {
+      console.error('No valid NBA teams found in API response.');
+      return new Response('No valid NBA teams found in API response.', { status: 500 });
     }
 
     const upsertData = validTeams.map(transformTeam);
@@ -98,7 +89,10 @@ export async function updateNbaTeams(
 
     if (error) {
       console.error('Supabase upsert error:', error);
-      return new Response(`Database error: ${error.message}`, { status: 500 });
+      const errorMsg = (typeof error === 'object' && error && 'message' in error)
+        ? error.message
+        : JSON.stringify(error);
+      return new Response(`Database error: ${errorMsg}`, { status: 500 });
     }
 
     return new Response('NBA teams updated successfully.', { status: 200 });
@@ -114,11 +108,7 @@ if (import.meta.main) {
   serve((_req) => {
     return updateNbaTeams(
       async () => {
-        const response = await fetch(NBA_TEAMS_API_URL, {
-          headers: {
-            'Ocp-Apim-Subscription-Key': SPORTS_DATA_NBA_API_KEY,
-          },
-        });
+        const response = await fetch(NBA_TEAMS_API_URL);
         if (!response.ok) {
           throw new Error(`Failed to fetch NBA teams: ${response.status} ${response.statusText}`);
         }
@@ -129,7 +119,17 @@ if (import.meta.main) {
           Deno.env.get('SUPABASE_URL')!,
           Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
         );
-        return await supabase.from('NBA.Teams').upsert(upsertData, { onConflict: 'TeamID' });
+        // Use all-lowercase, schema-qualified table name for Postgres compatibility
+        // Consider using snake_case for all future schema/table/column names
+        // Debug logging for upsert
+        console.log('SUPABASE_URL:', Deno.env.get('SUPABASE_URL'));
+        console.log('SUPABASE_SERVICE_ROLE_KEY:', (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '').slice(0, 8) + '...');
+        console.log('Upsert payload sample:', JSON.stringify(upsertData[0], null, 2));
+        console.log('Upsert payload length:', upsertData.length);
+        const { error, data } = await supabase.from('nba.teams').upsert(upsertData, { onConflict: 'teamid' });
+        console.log('Upsert result:', { error, data });
+        return { error, data };
+
       }
     );
   });
