@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js";
+import { createClient } from "supabase";
 
 // Replace with your local or remote Supabase API URL and service role key as needed
 const supabase = createClient(

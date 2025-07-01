@@ -1,0 +1,8 @@
+{
+    "imports": {
+      "supabase": "https://esm.sh/@supabase/supabase-js@2",
+      "supabase/types": "jsr:@supabase/functions-js/edge-runtime.d.ts",
+      "std/http/server": "https://deno.land/std@0.224.0/http/server.ts"
+    }
+  }
+  
