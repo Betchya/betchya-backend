@@ -42,22 +42,16 @@ jobs:
         with:
           deno-version: latest
       - run: supabase start
-      - name: Navigate to Edge Function Directory
-        run: |
-          pwd
-          cd ./supabase/functions/update-nba-teams
-          pwd
+      - run: |
+         export EDGE_FUNCTION_DIRECTORY=./supabase/functions
+         export UPDATE_NBA_TEAMS_CONFIG=$EDGE_FUNCTION_DIRECTORY/update-nba-teams/deno.json
       - name: Create .env.local file
         run: |
-          echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
-          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
-          echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
-      - run: |
-          pwd
-          deno task test --env-file .env.local ./tests/unit
-      - run: |
-          pwd
-          deno task test --env-file .env.local ./tests/integration
+          echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
+          echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
+      - run: deno task test --env-file $EDGE_FUNCTION_DIRECTORY/.env.local --config=$UPDATE_NBA_TEAMS_CONFIG $EDGE_FUNCTION_DIRECTORY/update-nba-teams/tests/unit
+      - run: deno task test --env-file $EDGE_FUNCTION_DIRECTORY/.env.local --config=$UPDATE_NBA_TEAMS_CONFIG $EDGE_FUNCTION_DIRECTORY/update-nba-teams/tests/integration
       - name: Cleanup Local Supabase Instance
         run: |
           # Return to Supabase Project Root
