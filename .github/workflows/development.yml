@@ -32,7 +32,6 @@ jobs:
       LOCAL_SUPABASE_URL: "http://localhost:54321"
       LOCAL_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.LOCAL_SUPABASE_SERVICE_ROLE_KEY }}
       SPORTS_DATA_NBA_API_KEY: ${{ secrets.SPORTS_DATA_NBA_API_KEY }}
-
     steps:
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
@@ -42,20 +41,23 @@ jobs:
         with:
           deno-version: latest
       - run: supabase start
-      - run: |
-         export EDGE_FUNCTION_DIRECTORY=./supabase/functions
-         export UPDATE_NBA_TEAMS_CONFIG=$EDGE_FUNCTION_DIRECTORY/update-nba-teams/deno.json
-      - name: Create .env.local file
+      - name: Create .env.local file in Edge Function Directory
         run: |
-          echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
-          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
-          echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> $EDGE_FUNCTION_DIRECTORY/.env.local
-      - run: deno task test --env-file $EDGE_FUNCTION_DIRECTORY/.env.local --config=$UPDATE_NBA_TEAMS_CONFIG $EDGE_FUNCTION_DIRECTORY/update-nba-teams/tests/unit
-      - run: deno task test --env-file $EDGE_FUNCTION_DIRECTORY/.env.local --config=$UPDATE_NBA_TEAMS_CONFIG $EDGE_FUNCTION_DIRECTORY/update-nba-teams/tests/integration
+          cd ./supabase/functions
+          echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
+          echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
+      - name: Run Unit Tests
+        run: |
+          cd ./supabase/functions/update-nba-teams
+          deno task test --env-file ../.env.local ./tests/unit
+      - name: Run Integration Tests
+        run: |
+          cd ./supabase/functions/update-nba-teams
+          deno task test --env-file ../.env.local ./tests/integration
       - name: Cleanup Local Supabase Instance
         run: |
           # Return to Supabase Project Root
-          cd ../../..
           supabase stop --no-backup
       
 
