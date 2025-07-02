@@ -47,12 +47,11 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
       - run: supabase start
-      - name: Navigate to update-nba-teams Edge Function Directory
-        run: cd supabase/functions/update-nba-teams
-      - name: update-nba-teams Edge Function Unit Tests
-        run: deno task test --import-map=import_map.json --env-file .env.local tests/unit
-      - name: update-nba-teams Supabase DB Integration Tests
-        run: deno task test --import-map=import_map.json --env-file .env.local tests/integration
+      - name: Execute update-nba-teams Edge Function Unit & Integration Tests
+        run: |
+          cd supabase/functions/update-nba-teams
+          deno task test --import-map=import_map.json --env-file .env.local tests/unit
+          deno task test --import-map=import_map.json --env-file .env.local tests/integration
       - run: supabase stop
       
 
@@ -64,6 +63,7 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DEV_DB_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
