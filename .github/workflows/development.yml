@@ -22,9 +22,9 @@ jobs:
           version: latest
       - run: supabase db start
       - run: supabase test db
-      - run: supabase stop
+      - run: supabase stop --no-backup
 
-  # Runs our edge function tests against a local Supabase instance.
+  # Runs our edge function unit and integration tests against a local Supabase instance.
   unit_test_edge_functions:
     runs-on: ubuntu-latest
 
@@ -41,19 +41,23 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: latest
+      - run: supabase start
+      - run: cd ./supabase/functions/update-nba-teams
       - name: Create .env.local file
         run: |
           echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
           echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
-      - run: supabase start
-      - name: Execute update-nba-teams Edge Function Unit & Integration Tests
+      - name: Run update-nba-teams Edge Function Unit & Integration Tests
         run: |
-          cd supabase/functions/update-nba-teams
           pwd
-          deno task test --import-map=import_map.json --env-file .env.local tests/unit
-          deno task test --import-map=import_map.json --env-file .env.local tests/integration
-      - run: supabase stop
+          deno task test --import-map=./import_map.json --env-file .env.local ./tests/unit
+          deno task test --import-map=./import_map.json --env-file .env.local ./tests/integration
+      - name: Cleanup Local Supabase Instance
+        run: |
+          # Return to Supabase Project Root
+          cd ../../..
+          supabase stop --no-backup
       
 
   # This job connects to our Test Env Supabase Project and lists the currently deployed
