@@ -1,7 +1,6 @@
 {
-    "compilerOptions": {
-      "lib": ["deno.ns", "dom"]
-    },
-    "importMap": "./import_map.json"
+  "importMap": "./import_map.json",
+  "tasks": {
+    "test": "deno test -E -R -N"
   }
-  
+}
