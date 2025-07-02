@@ -2,7 +2,7 @@
 // Supabase client is now created inside the handler, per Supabase best practices.
 import { createClient } from 'supabase';
 import { Request } from 'supabase/types'; // Import the type declaration file for Supabase Edge Runtime
-import { NbaTeamRecord, UpsertRecordsFunction } from "./types.ts";
+import { UpsertRecordsFunction } from "./types.ts";
 import { mapTeamToDBRecord } from "./util/mapper.ts";
 import { isValidTeam } from "./util/validator.ts";
 
@@ -11,9 +11,10 @@ const NBA_TEAMS_API_URL = `https://api.sportsdata.io/v3/nba/scores/json/AllTeams
 
 // Named function to fetch NBA teams from the API
 const fetchNbaTeams = async (): Promise<unknown[]> => {
+  console.log('Fetching NBA teams from Sportsdata.io API:', NBA_TEAMS_API_URL);
   const response = await fetch(NBA_TEAMS_API_URL);
   if (!response.ok) {
-    throw new Error(`Failed to fetch NBA teams: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch NBA teams from Sportsdata.io ${response.status} ${response.statusText}`);
   }
   return await response.json();
 };
@@ -22,15 +23,16 @@ const fetchNbaTeams = async (): Promise<unknown[]> => {
 const upsertNbaTeamRecords : UpsertRecordsFunction = async (upsertData) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    Deno.env.get('SUPABASE_ANON_KEY')!
   );
 
   // Debug logging for upsert
+  console.log(`${Deno.env.get('SUPABASE_ANON_KEY')}`);
   console.log('Upsert payload sample:', JSON.stringify(upsertData[0], null, 2));
   console.log('Upsert payload length:', upsertData.length);
 
   // Perform the upsert operation
-  const { data, error } = await supabase.from('nba.teams').upsert(upsertData, { onConflict: 'teamid' });
+  const { data, error } = await supabase.schema('nba').from('teams').upsert(upsertData, { onConflict: 'teamid' });
   console.log('Upsert NBA Teams result:', { data, error });
 
   return { data, error };
