@@ -120,7 +120,7 @@ CREATE TABLE NBA.Projections (
 );
 
 -- Provide access to the custom `nba` schema to all roles, allowing our Edge Functions to read/write data
-USAGE ON SCHEMA nba TO anon, authenticated, service_role;
+GRANT USAGE ON SCHEMA nba TO anon, authenticated, service_role;
 GRANT ALL ON ALL TABLES IN SCHEMA nba TO anon, authenticated, service_role;
 GRANT ALL ON ALL ROUTINES IN SCHEMA nba TO anon, authenticated, service_role;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA nba TO anon, authenticated, service_role;
