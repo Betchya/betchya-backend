@@ -50,11 +50,11 @@ jobs:
       - name: Run Unit Tests
         run: |
           cd ./supabase/functions/update-nba-teams
-          deno task test --env-file ../.env.local ./tests/unit
+          deno task test --env-file=../.env.local ./tests/unit
       - name: Run Integration Tests
         run: |
           cd ./supabase/functions/update-nba-teams
-          deno task test --env-file ../.env.local ./tests/integration
+          deno task test --env-file=../.env.local ./tests/integration
       - name: Cleanup Local Supabase Instance
         run: |
           # Return to Supabase Project Root
