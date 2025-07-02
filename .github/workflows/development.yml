@@ -41,18 +41,18 @@ jobs:
         with:
           deno-version: latest
       - run: supabase start
-      - name: Create .env.local file in Edge Function Directory
-        run: |
+      - run: |
+          echo "Creating .env.local file in Edge Function Directory"
           cd ./supabase/functions
           echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
           echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
-      - name: Run Unit Tests
-        run: |
+      - run: |
+          echo "Running Unit Tests"
           cd ./supabase/functions/update-nba-teams
           deno task test --env-file=../.env.local ./tests/unit
-      - name: Run Integration Tests
-        run: |
+      - run: |
+          echo "Running Integration Tests"
           cd ./supabase/functions/update-nba-teams
           deno task test --env-file=../.env.local ./tests/integration
       - name: Cleanup Local Supabase Instance
