@@ -43,7 +43,10 @@ jobs:
           deno-version: latest
       - run: supabase start
       - name: Navigate to Edge Function Directory
-        run: cd ./supabase/functions/update-nba-teams
+        run: |
+          pwd
+          cd ./supabase/functions/update-nba-teams
+          pwd
       - name: Create .env.local file
         run: |
           echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
