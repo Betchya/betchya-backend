@@ -1,4 +1,15 @@
-import { SportsDataTeamRO } from "../types.ts";
+import { SportsDataRO } from "../../shared/types.ts"; // Import the base type for SportsData response
+
+// Types for SportsData.io NBA Team Response parsing and DB upserting in Supabase
+interface SportsDataTeamRO extends SportsDataRO {
+    TeamID: number;
+    Key: string;
+    City: string;
+    Name: string;
+    Conference: string;
+    Division: string;
+    Active: boolean;
+};
 
 const isValidTeam = (team: unknown): team is SportsDataTeamRO => {
     if (typeof team !== 'object' || team === null) {
@@ -18,3 +29,5 @@ const isValidTeam = (team: unknown): team is SportsDataTeamRO => {
 };
 
 export { isValidTeam };
+
+export type { SportsDataTeamRO };
