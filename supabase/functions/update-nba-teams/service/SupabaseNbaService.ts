@@ -16,32 +16,23 @@ class SupabaseDbNbaService {
   }
 
   syncNbaTeamData = async (tableName: string, conflictKey: string) => {
-    try {
-      const nbaAllTeamsResponse = await this.sportsDataDAO.getAllTeams();
-      if (!Array.isArray(nbaAllTeamsResponse) || nbaAllTeamsResponse.length === 0) {
-         throw new Error('Invalid API response: expected array of teams');
-      }
-    
-      const validatedRecords: NbaTeamRecord[] = nbaAllTeamsResponse.filter(TeamUtil.isValidTeam).map(mapNbaTeamToDBRecord);
-      if (validatedRecords.length === 0) {
-        return `No valid data found in API response for syncing NBA teams.`;
-      }
-      console.log(`Valid NBA teams to upsert: ${validatedRecords}`);
-
-      const { error } = await this.supabaseDbDao.upsertRecords<NbaTeamRecord>(validatedRecords, tableName, conflictKey);
-
-      if (error) {
-        const errorMsg = (typeof error === 'object' && error && 'message' in error)
-          ? error.message
-          : JSON.stringify(error);
-        throw new Error(`Database error ${errorMsg}`);
-      }
-  
-      return `DB updated successfully.`;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return `Failed to update NBA teams: ${message}`;
+    const nbaAllTeamsResponse = await this.sportsDataDAO.getAllTeams();
+    if (!Array.isArray(nbaAllTeamsResponse) || nbaAllTeamsResponse.length === 0) {
+        throw new Error('Invalid API response: expected array of teams');
     }
+  
+    const validatedRecords: NbaTeamRecord[] = nbaAllTeamsResponse.filter(TeamUtil.isValidTeam).map(mapNbaTeamToDBRecord);
+    if (validatedRecords.length === 0) {
+      throw new Error(`Invalid API Response: No valid data found in NBA All Teams Sports Data.`);
+    }
+
+    const { error } = await this.supabaseDbDao.upsertRecords<NbaTeamRecord>(validatedRecords, tableName, conflictKey);
+    if (error) {
+      const errorMsg = error?.message ? error.message : JSON.stringify(error);
+      throw new Error(`Database error: ${errorMsg}`);
+    }
+
+    return `DB updated successfully.`;
   }
 }
 
