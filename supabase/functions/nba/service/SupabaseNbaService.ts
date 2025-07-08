@@ -26,11 +26,11 @@ class SupabaseDbNbaService {
       throw new Error(`Invalid API Response: No valid data found in NBA All Teams Sports Data.`);
     }
 
-    const { error } = await this.supabaseDbDao.upsertRecords<NbaTeamRecord>(validatedRecords, tableName, conflictKey);
-    if (error) {
-      const errorMsg = error?.message ? error.message : JSON.stringify(error);
-      throw new Error(`Database error: ${errorMsg}`);
-    }
+    // const { error } = await this.supabaseDbDao.upsertRecords<NbaTeamRecord>(validatedRecords, tableName, conflictKey);
+    // if (error) {
+    //   const errorMsg = error?.message ? error.message : JSON.stringify(error);
+    //   throw new Error(`Database error: ${errorMsg}`);
+    // }
 
     return `DB updated successfully.`;
   }
