@@ -1,6 +1,6 @@
 {
   "importMap": "./import_map.json",
   "tasks": {
-    "test": "deno test -E -R -N"
+    "run": "deno run -E -R -N"
   }
 }

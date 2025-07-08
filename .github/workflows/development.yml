@@ -49,12 +49,12 @@ jobs:
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
       - run: |
           echo "Running Unit Tests"
-          cd ./supabase/functions/update-nba-teams
-          deno task test --env-file=../.env.local ./tests/unit
+          cd ./supabase/functions/tests
+          deno task test --env-file=../.env.local ./unit
       - run: |
           echo "Running Integration Tests"
-          cd ./supabase/functions/update-nba-teams
-          deno task test --env-file=../.env.local ./tests/integration
+          cd ./supabase/functions/tests
+          deno task test --env-file=../.env.local ./integration
       - name: Cleanup Local Supabase Instance
         run: |
           # Return to Supabase Project Root
