@@ -1,6 +1,6 @@
 {
     "importMap": "./import_map.json",
     "tasks": {
-      "test": "deno test -E -R -N"
+      "test": "deno test --allow-env --allow-read --allow-net"
     }
 }

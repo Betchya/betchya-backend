@@ -1,6 +1,6 @@
 {
   "importMap": "./import_map.json",
   "tasks": {
-    "run": "deno run -E -R -N"
+    "run": "deno run --allow-env --allow-read --allow-net"
   }
 }
