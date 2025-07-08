@@ -1,18 +1,19 @@
 import { createClient, SupabaseClient } from 'supabase';
 import { SupabaseDbRecord } from "../../shared/types.ts";
+import * as EnvironmentVariables from "../../shared/EnvironmentVariables.ts";
 
 enum SupabaseSchemaType {
   NBA = 'nba',
 };
 
-class SupabaseDbNbaDao {
+class NbaSupabaseDbDAO {
   private supabaseClient: SupabaseClient;
   private schema: SupabaseSchemaType;
 
   constructor(schema: SupabaseSchemaType) {
     this.supabaseClient = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_ANON_KEY')!
+        EnvironmentVariables.SUPABASE_URL!,
+        EnvironmentVariables.SUPABASE_ANON_KEY!
     );
     this.schema = schema;
   }
@@ -32,4 +33,4 @@ class SupabaseDbNbaDao {
   }
 }
 
-export { SupabaseDbNbaDao, SupabaseSchemaType };
+export { NbaSupabaseDbDAO, SupabaseSchemaType };

@@ -1,11 +1,11 @@
 import { Request } from 'supabase/types'; // Import the type declaration file for Supabase Edge Runtime
-import { SportsDataNbaDAO } from "./dao/nba-sports-data-dao.ts";
-import { SupabaseDbNbaDao, SupabaseSchemaType } from "./dao/nba-supabase-db-dao.ts";
+import { NbaSportsDataDAO } from "./dao/NbaSportsDataDAO.ts";
+import { NbaSupabaseDbDAO, SupabaseSchemaType } from "./dao/NbaSupabaseDbDAO.ts";
 import { SupabaseDbNbaService } from "./service/SupabaseNbaService.ts";
 
 // Dependency Injection for Services and DAOs needed by the current Edge Function with index.ts being responsible for the Controller Layer
-const sportsDataIoDAO = new SportsDataNbaDAO();
-const nbaDAO = new SupabaseDbNbaDao(SupabaseSchemaType.NBA); // Use the enum value for the schema
+const sportsDataIoDAO = new NbaSportsDataDAO();
+const nbaDAO = new NbaSupabaseDbDAO(SupabaseSchemaType.NBA); // Use the enum value for the schema
 const supabaseNbaService = new SupabaseDbNbaService(sportsDataIoDAO, nbaDAO);
 
 // Edge handler that pulls NBA Team data from SportsData.io and updates our nba.teams Supabase DB Table
