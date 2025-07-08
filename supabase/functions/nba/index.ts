@@ -1,13 +1,13 @@
-import { SportsDataNbaDAO } from "./dao/nba-sports-data-dao.ts";
-import { SupabaseDbNbaDao, SupabaseSchemaType } from "./dao/nba-supabase-db-dao.ts";
-import { SupabaseDbNbaService } from "./service/SupabaseNbaService.ts";
-import { RouterBuilder, SupportedHttpMethod } from "../shared/RouterBuilder.ts";
 import { Context } from "hono";
+import { RouterBuilder, SupportedHttpMethod } from "../shared/RouterBuilder.ts";
+import { SupabaseDbNbaService } from "./service/SupabaseNbaService.ts";
+import { NbaSportsDataDAO } from "./dao/NbaSportsDataDAO.ts";
+import { NbaSupabaseDbDAO, SupabaseSchemaType } from "./dao/NbaSupabaseDbDAO.ts";
 
 // Dependency Injection for Services and DAOs needed by the current Edge Function for handling NBA related request
 // Note: this index.ts file is responsible for the Controller Layer
-const sportsDataIoDAO = new SportsDataNbaDAO();
-const nbaDAO = new SupabaseDbNbaDao(SupabaseSchemaType.NBA); // Use the enum value for the schema
+const sportsDataIoDAO = new NbaSportsDataDAO();
+const nbaDAO = new NbaSupabaseDbDAO(SupabaseSchemaType.NBA); // Use the enum value for the schema
 const supabaseNbaService = new SupabaseDbNbaService(sportsDataIoDAO, nbaDAO);
 
 const routerBuilder = new RouterBuilder("/nba");
