@@ -1,5 +1,5 @@
 {
-  "version": "5",
+  "version": "4",
   "specifiers": {
     "jsr:@hono/hono@4.8.4": "4.8.4",
     "jsr:@supabase/supabase-js@2": "2.50.3",
