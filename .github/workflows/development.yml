@@ -1,4 +1,4 @@
-name: Development Worfklow
+name: Development Environment Worfklow
 
 on:
   push:
@@ -6,16 +6,66 @@ on:
       - 'feature/*'
       - 'bugfix/*'
       - 'hotfix/*'
-      - 'main'
   workflow_dispatch:
 
-jobs: 
-  deploy:
+jobs:
+  # Runs DB migrations and unit tests against a local Supabase instance.
+  unit_test_db_migrations:
     runs-on: ubuntu-latest
-    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase db start
+      - run: supabase test db
+      - run: supabase stop --no-backup
+
+  # Runs our edge function unit and integration tests against a local Supabase instance.
+  unit_test_edge_functions:
+    runs-on: ubuntu-latest
+
     env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      LOCAL_SUPABASE_URL: "http://localhost:54321"
+      LOCAL_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.LOCAL_SUPABASE_SERVICE_ROLE_KEY }}
+      SPORTS_DATA_NBA_API_KEY: ${{ secrets.SPORTS_DATA_NBA_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+      - run: supabase start
+      - run: |
+          echo "Creating .env.local file in Edge Function Directory"
+          cd ./supabase/functions
+          echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
+          echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
+      - run: |
+          echo "Running Unit Tests"
+          cd ./supabase/functions/tests
+          deno task test --env-file=../.env.local ./unit
+      - run: |
+          echo "Running Integration Tests"
+          cd ./supabase/functions/tests
+          deno task test --env-file=../.env.local ./integration
+      - name: Cleanup Local Supabase Instance
+        run: |
+          # Return to Supabase Project Root
+          supabase stop --no-backup
+      
+
+  # This job connects to our Test Env Supabase Project and lists the currently deployed
+  # migrations and edge functions.
+  test_env_display_deployed:
+    runs-on: ubuntu-latest
+
+    env:
       PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DEV_DB_PASSWORD }}
 
     steps:
@@ -23,9 +73,6 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      # -run: supabase start
       - run: supabase link --project-ref $PROJECT_ID
-      - run: supabase migration list
-      # - run: supabase db diff --linked --debug
-      - run: supabase db push
-      - run: supabase migration list
+      - run: supabase migrations list
+      - run: supabase functions list

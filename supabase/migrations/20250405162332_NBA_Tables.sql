@@ -118,3 +118,11 @@ CREATE TABLE NBA.Projections (
     CONSTRAINT fk_team FOREIGN KEY (TeamID) REFERENCES NBA.Teams(TeamID),
     CONSTRAINT unique_projection_game_player UNIQUE (GameID, PlayerID) -- One projection per player per game
 );
+
+-- Provide access to the custom `nba` schema to all roles, allowing our Edge Functions to read/write data
+GRANT USAGE ON SCHEMA nba TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA nba TO anon, authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA nba TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA nba TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA nba GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA nba GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
