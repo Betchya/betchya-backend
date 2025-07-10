@@ -8,7 +8,7 @@ enum SupabaseSchemaType {
 
 class SupabaseDbDAO<T extends SupabaseSchemaType> {
   private supabaseClient: SupabaseClient;
-  private schema: SupabaseSchemaType;
+  private schema: T;
 
   constructor(schema: T) {
     this.supabaseClient = createClient(
