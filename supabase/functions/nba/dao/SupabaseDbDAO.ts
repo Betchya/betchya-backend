@@ -6,11 +6,11 @@ enum SupabaseSchemaType {
   NBA = 'nba',
 };
 
-class NbaSupabaseDbDAO {
+class SupabaseDbDAO<T extends SupabaseSchemaType> {
   private supabaseClient: SupabaseClient;
   private schema: SupabaseSchemaType;
 
-  constructor(schema: SupabaseSchemaType) {
+  constructor(schema: T) {
     this.supabaseClient = createClient(
         EnvironmentVariables.SUPABASE_URL!,
         EnvironmentVariables.SUPABASE_ANON_KEY!
@@ -33,4 +33,4 @@ class NbaSupabaseDbDAO {
   }
 }
 
-export { NbaSupabaseDbDAO, SupabaseSchemaType };
+export { SupabaseDbDAO, SupabaseSchemaType };
