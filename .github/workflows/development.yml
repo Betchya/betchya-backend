@@ -47,7 +47,7 @@ jobs:
       - run: |
           echo "Running Unit Tests"
           cd ./supabase/functions/tests
-          deno task test --env-file=../.env.local ./unit
+          deno task test --coverage --env-file=../.env.local ./unit
       - run: |
           echo "Running Integration Tests"
           cd ./supabase/functions/tests
