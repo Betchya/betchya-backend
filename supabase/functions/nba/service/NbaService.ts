@@ -7,7 +7,7 @@ import * as TeamUtil from "../ro/SportsDataTeamRO.ts";
 import { NbaTeamRecord } from "../entity/NbaTeamRecord.ts";
 import { SupabaseSchemaType } from "../dao/SupabaseDbDAO.ts";
 
-class SupabaseDbNbaService {
+class NbaService {
   private sportsDataDAO: NbaSportsDataDAO;
   private supabaseDbDao: SupabaseDbDAO<SupabaseSchemaType.NBA>;
 
@@ -37,4 +37,4 @@ class SupabaseDbNbaService {
   }
 }
 
-export { SupabaseDbNbaService };
+export { NbaService };
