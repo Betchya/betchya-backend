@@ -1,11 +1,11 @@
 // This imported is needed to load the .env file:
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 import { assertEquals, assertFalse } from "jsr:@std/assert";
-import { isValidTeam } from "../../nba/ro/SportsDataTeamRO.ts";
-import { mapNbaTeamToDBRecord } from "../../nba/entity/NbaTeamRecord.ts";
+import { isValidTeam } from "../../../nba/ro/SportsDataTeamRO.ts";
+import { mapNbaTeamToDBRecord } from "../../../nba/entity/NbaTeamRecord.ts";
 // import { updateNbaTeams } from "../../nba/index.ts";
-import { NbaTeamRecord } from "../../nba/entity/NbaTeamRecord.ts";
-import { SportsDataTeamRO } from "../../nba/ro/SportsDataTeamRO.ts";
+import { NbaTeamRecord } from "../../../nba/entity/NbaTeamRecord.ts";
+import { SportsDataTeamRO } from "../../../nba/ro/SportsDataTeamRO.ts";
 
 // Example valid and invalid team data for SportsData.io
 const validTeam : NbaTeamRecord = {
