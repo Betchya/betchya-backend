@@ -5,13 +5,9 @@ enum SupportedHttpMethod {
 };
 
 class RouterBuilder {
-    private app: Hono;
-    private routes: Array<{ method: SupportedHttpMethod; path: string; handler: (context: Context) => Promise<TypedResponse> }>;
-
-    private constructor() {
-        this.app = new Hono();
-        this.routes = [];
-    }
+    private app: Hono = new Hono();
+    private basePath: string = '';
+    private routes: Array<{ method: SupportedHttpMethod; path: string; handler: (context: Context) => Promise<TypedResponse> }> = [];
 
     static builder(): RouterBuilder {
         return new RouterBuilder();
@@ -22,26 +18,28 @@ class RouterBuilder {
             throw new Error('Base path must start with a forward slash (/)');
         }
         
+        this.basePath = basePath;
         this.app = new Hono().basePath(basePath);
         return this;
     }
 
-    addRoute(method: SupportedHttpMethod, path: string, requestHandler: (context: Context) => Promise<TypedResponse>): RouterBuilder {
+    withRoute(method: SupportedHttpMethod, path: string, requestHandler: (context: Context) => Promise<TypedResponse>): RouterBuilder {
         if (this.routes.some(route => route.method === method && route.path === path)) {
             throw new Error(`Route ${method} ${path} already exists`);
         };
 
         this.routes.push({ method, path, handler: requestHandler });
+        
+        if (method === SupportedHttpMethod.POST) {
+            this.app.post(path, requestHandler);
+            this.app.all(path, (c) => c.text('Method Not Allowed', 405));
+        }
+
         return this;
     }
 
     build(): Hono {
-        this.routes.forEach(route => {
-            if (route.method === SupportedHttpMethod.POST) {
-                this.app.post(route.path, route.handler);
-                this.app.all(route.path, (c) => c.text('Method Not Allowed', 405));
-            }
-        });
+        if (this.basePath === '') throw new Error("Base path is required and must be set using withBasePath");
 
         return this.app;
     }
