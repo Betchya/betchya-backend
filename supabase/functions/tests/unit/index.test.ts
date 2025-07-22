@@ -17,7 +17,7 @@ const buildMockNbaControllerFromStubs = (stubs: {[key: string]: Mock.Stub} = def
 const defaultNbaController = buildMockNbaControllerFromStubs();
 
 const getAppWithMocks = (controller: NbaController = defaultNbaController) => RouterBuilder.builder().withBasePath("/nba")
-  .addRoute(
+  .withRoute(
     SupportedHttpMethod.POST,
     "/teams",
     controller.updateTeams.bind(controller),

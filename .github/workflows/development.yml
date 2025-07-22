@@ -42,7 +42,7 @@ jobs:
           echo "Creating .env.local file in Edge Function Directory"
           cd ./supabase/functions
           echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env.local
-          echo "SUPABASE_SERVICE_ROLE_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
+          echo "SUPABASE_ANON_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env.local
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env.local
       - run: |
           echo "Running Unit Tests"
