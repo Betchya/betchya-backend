@@ -47,11 +47,11 @@ jobs:
       - run: |
           echo "Running Unit Tests"
           cd ./supabase/functions/tests
-          deno task test --coverage --env-file=../.env ./unit
+          deno task test --coverage ./unit
       - run: |
           echo "Running Integration Tests"
           cd ./supabase/functions/tests
-          deno task test --env-file=../.env ./integration
+          deno task test ./integration
       - name: Cleanup Local Supabase Instance
         run: |
           # Return to Supabase Project Root
