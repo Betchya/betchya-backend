@@ -7,7 +7,7 @@ enum SupportedHttpMethod {
 class RouterBuilder {
     private app: Hono = new Hono();
     private basePath: string = '';
-    private routes: Array<{ method: SupportedHttpMethod; path: string; handler: (context: Context) => Promise<TypedResponse> }> = [];
+    private routes: Array<{ method: SupportedHttpMethod; path: string; }> = [];
 
     static builder(): RouterBuilder {
         return new RouterBuilder();
@@ -27,8 +27,8 @@ class RouterBuilder {
         if (this.routes.some(route => route.method === method && route.path === path)) {
             throw new Error(`Route ${method} ${path} already exists`);
         };
-
-        this.routes.push({ method, path, handler: requestHandler });
+        
+        this.routes.push({ method, path });
         
         if (method === SupportedHttpMethod.POST) {
             this.app.post(path, requestHandler);

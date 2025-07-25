@@ -6,11 +6,11 @@ enum SupabaseSchemaType {
   NBA = 'nba',
 };
 
-class SupabaseDbDAO<T extends SupabaseSchemaType> {
+class SupabaseDbDAO {
   private supabaseClient: SupabaseClient;
-  private schema: T;
+  private schema: SupabaseSchemaType;
 
-  constructor(schema: T) {
+  constructor(schema: SupabaseSchemaType) {
     this.supabaseClient = createClient(
         EnvironmentVariables.SUPABASE_URL!,
         EnvironmentVariables.SUPABASE_ANON_KEY!

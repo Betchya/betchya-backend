@@ -5,13 +5,12 @@ import { mapNbaTeamToDBRecord } from "../entity/NbaTeamRecord.ts";
 import { SportsDataTeamRO, isValidTeam } from "../ro/SportsDataTeamRO.ts";
 
 import { NbaTeamRecord } from "../entity/NbaTeamRecord.ts";
-import { SupabaseSchemaType } from "../dao/SupabaseDbDAO.ts";
 
 class NbaService {
   private sportsDataDAO: NbaSportsDataDAO;
-  private supabaseDbDao: SupabaseDbDAO<SupabaseSchemaType.NBA>;
+  private supabaseDbDao: SupabaseDbDAO;
 
-  constructor(sportsDataDAO: NbaSportsDataDAO, supabaseDbDao: SupabaseDbDAO<SupabaseSchemaType.NBA>) {
+  constructor(sportsDataDAO: NbaSportsDataDAO, supabaseDbDao: SupabaseDbDAO) {
     this.sportsDataDAO = sportsDataDAO;
     this.supabaseDbDao = supabaseDbDao;
   }
