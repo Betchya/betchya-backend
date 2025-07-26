@@ -37,7 +37,7 @@ const DEFAULT_MOCKS = {
 
 const buildMockNbaServiceFromStubs = (stubs: {[key: string]: {[key: string]: Mock.Stub}} = DEFAULT_MOCKS) => {
     const { nbaSportsDataDAO, supabaseDbDAO} = {...DEFAULT_MOCKS, ...stubs};
-    return new NbaService(nbaSportsDataDAO as unknown as NbaSportsDataDAO, supabaseDbDAO as unknown as SupabaseDbDAO<SupabaseSchemaType.NBA>);
+    return new NbaService(nbaSportsDataDAO as unknown as NbaSportsDataDAO, supabaseDbDAO as unknown as SupabaseDbDAO);
 };
 
 // Create a test instance of the controller with the mocked service
