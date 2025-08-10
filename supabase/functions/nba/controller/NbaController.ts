@@ -21,6 +21,19 @@ class NbaController {
             }
         }
     }
+
+    updatePlayers = async (context: Context) => {
+        try {
+            const successMessage = await this.nbaService.syncNbaPlayerData();
+            return context.json({ message: successMessage }, { status: 200 });
+        } catch (error: Error | unknown) {
+            if (error instanceof Error) {
+                return context.json({ message: `Failed to update NBA players: ${error.message}` }, { status: 500 });
+            } else {
+                return context.json({ message: "Failed to update NBA players: Unknown error" }, { status: 500 });
+            }
+        }
+    }
 };
 
 export { NbaController };
