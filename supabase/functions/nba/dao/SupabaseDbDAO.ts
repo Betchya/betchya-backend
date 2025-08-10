@@ -24,6 +24,7 @@ class SupabaseDbDAO {
    * @returns A promise resolving to the upsert result.
    */
   upsertRecords = async <T extends SupabaseDbRecord> (upsertData: T[], tableName: string, conflictKey: string) => {
+    console.log(`Upserting ${upsertData.length} records into table: ${tableName} with conflict key: ${conflictKey}`);
     const { data, error } = await this.supabaseClient
         .schema(this.schema)
         .from(tableName)

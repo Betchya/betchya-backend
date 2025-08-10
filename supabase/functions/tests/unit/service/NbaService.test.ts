@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "deno/assert";
 import * as Mock from "deno/mock";
 import { NbaSportsDataDAO } from "../../../nba/dao/NbaSportsDataDAO.ts";
-import { SupabaseDbDAO, SupabaseSchemaType } from "../../../nba/dao/SupabaseDbDAO.ts";
+import { SupabaseDbDAO } from "../../../nba/dao/SupabaseDbDAO.ts";
 import { NbaService } from "../../../nba/service/NbaService.ts";
 import { SportsDataTeamRO } from "../../../nba/ro/SportsDataTeamRO.ts";
 
