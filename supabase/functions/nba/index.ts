@@ -22,6 +22,16 @@ const APP = RouterBuilder.builder()
     "/teams", 
     nbaController.updateTeams.bind(nbaController),
   )
+
+   /**
+   * Resource Path: /nba/games
+   * Route/Endpoint to upsert NBA games from Sportsdata.io to our in Supabase nba.games DB Table.
+  */
+  .withRoute(
+    SupportedHttpMethod.POST,
+    "/games",
+    nbaController.updateGames.bind(nbaController),
+  )
   //TODO add other NBA endpoints for handling players, games, etc. as needed
   .build();
 
