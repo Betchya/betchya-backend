@@ -28,6 +28,7 @@ jobs:
     env:
       LOCAL_SUPABASE_URL: "http://localhost:54321"
       LOCAL_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.LOCAL_SUPABASE_SERVICE_ROLE_KEY }}
+      LOCAL_SUPABASE_ANON_KEY: ${{ secrets.LOCAL_SUPABASE_ANON_KEY }}
       SPORTS_DATA_NBA_API_KEY: ${{ secrets.SPORTS_DATA_NBA_API_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +43,7 @@ jobs:
           echo "Creating .env file in Edge Function Directory"
           cd ./supabase/functions
           echo "SUPABASE_URL=${LOCAL_SUPABASE_URL}" >> .env
-          echo "SUPABASE_ANON_KEY=${LOCAL_SUPABASE_SERVICE_ROLE_KEY}" >> .env
+          echo "SUPABASE_ANON_KEY=${LOCAL_SUPABASE_ANON_KEY}" >> .env
           echo "SPORTS_DATA_NBA_API_KEY=${SPORTS_DATA_NBA_API_KEY}" >> .env
       - run: |
           echo "Running Unit Tests"
