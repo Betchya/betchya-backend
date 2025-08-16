@@ -11,8 +11,6 @@ class SupabaseDbDAO {
   private schema: SupabaseSchemaType;
 
   constructor(schema: SupabaseSchemaType) {
-    // Use anon key to respect RLS by default. If elevated privileges are needed for a specific flow,
-    // consider wiring a separate client or making this configurable.
     this.supabaseClient = createClient(
         EnvironmentVariables.SUPABASE_URL!,
         EnvironmentVariables.SUPABASE_ANON_KEY!
