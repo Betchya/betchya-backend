@@ -30,7 +30,16 @@ class NbaController {
             if (rawDate) {
                 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
                 const validFormat = datePattern.test(rawDate);
-                const validDate = !Number.isNaN(Date.parse(rawDate));
+                let validDate = false;
+                if (validFormat) {
+                    const [yearStr, monthStr, dayStr] = rawDate.split("-");
+                    const year = Number(yearStr);
+                    const month = Number(monthStr);
+                    const day = Number(dayStr);
+                    // Construct a UTC date and compare components to ensure no rollover occurred
+                    const dt = new Date(Date.UTC(year, month - 1, day));
+                    validDate = dt.getUTCFullYear() === year && (dt.getUTCMonth() + 1) === month && dt.getUTCDate() === day;
+                }
                 if (!validFormat || !validDate) {
                     return context.json({ message: "Invalid date. Expected format: YYYY-MM-DD" }, { status: 400 });
                 }
