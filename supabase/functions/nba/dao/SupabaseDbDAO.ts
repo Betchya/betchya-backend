@@ -10,8 +10,8 @@ class SupabaseDbDAO {
   private supabaseClient: SupabaseClient;
   private schema: SupabaseSchemaType;
 
-  constructor(schema: SupabaseSchemaType) {
-    this.supabaseClient = createClient(
+  constructor(schema: SupabaseSchemaType, client?: SupabaseClient) {
+    this.supabaseClient = client ?? createClient(
         EnvironmentVariables.SUPABASE_URL!,
         EnvironmentVariables.SUPABASE_ANON_KEY!
     );
