@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - 'main'
+  pull_request:
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs: 
@@ -22,7 +25,7 @@ jobs:
         with:
           deno-version: v2.x
       - name: Run unit tests
-        run: deno test --allow-env --allow-read --allow-net --env-file=../.env
+        run: deno test --allow-env --allow-read --allow-net
   deploy_db_migrations:
     runs-on: ubuntu-latest
     needs: unit_tests
