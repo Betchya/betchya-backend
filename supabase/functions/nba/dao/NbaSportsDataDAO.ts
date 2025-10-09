@@ -1,6 +1,7 @@
 import { SportsDataTeamRO } from "../ro/SportsDataTeamRO.ts"; // Import the type for SportsData.io NBA Team response
 import { SportsDataGameRO } from "../ro/SportsDataGameRO.ts"; // Import the type for SportsData.io NBA Game response
 import * as EnvironmentVariables from "../../shared/EnvironmentVariables.ts"; // Import environment variables
+import { Logger } from "../../shared/Logger.ts";
 
 class NbaSportsDataDAO {
   private apiKey: string;
@@ -22,8 +23,10 @@ class NbaSportsDataDAO {
    * @throws An error if the fetch request fails or the response is invalid.
    */
   getAllTeams = async (): Promise<SportsDataTeamRO[]> => {
+    Logger.debug("sportsdata fetch AllTeams", { url: this.allTeamsEndpoint.toString() });
     const response = await fetch(this.allTeamsEndpoint);
     if (!response.ok) {
+      Logger.warn("sportsdata non-ok AllTeams", { status: response.status, statusText: response.statusText });
       throw new Error(`Failed to fetch NBA all teams data from Sportsdata.io  ${response.status} ${response.statusText}`);
     }
 
@@ -31,6 +34,7 @@ class NbaSportsDataDAO {
       return await response.json() as SportsDataTeamRO[];
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      Logger.error("sportsdata json parse error AllTeams", { url: this.allTeamsEndpoint.toString(), error: errorMessage });
       throw new Error(`Failed to parse JSON response from Sportsdata.io ${this.allTeamsEndpoint}: ${errorMessage}`);
     }
   };
@@ -49,8 +53,10 @@ class NbaSportsDataDAO {
     }
 
     const endpoint = new URL(`${this.sportsDataDomain}/v3/nba/scores/json/GamesByDate/${date}?key=${this.apiKey}`);
+    Logger.debug("sportsdata fetch GamesByDate", { date, url: endpoint.toString() });
     const response = await fetch(endpoint);
     if (!response.ok) {
+      Logger.warn("sportsdata non-ok GamesByDate", { date, status: response.status, statusText: response.statusText });
       throw new Error(`Failed to fetch NBA games for ${date} from Sportsdata.io ${response.status} ${response.statusText}`);
     }
 
@@ -58,6 +64,7 @@ class NbaSportsDataDAO {
       return await response.json() as SportsDataGameRO[];
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      Logger.error("sportsdata json parse error GamesByDate", { date, url: endpoint.toString(), error: errorMessage });
       throw new Error(`Failed to parse JSON response from Sportsdata.io ${endpoint}: ${errorMessage}`);
     }
   }
