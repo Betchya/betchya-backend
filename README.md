@@ -36,3 +36,27 @@ Supabase project to serve as the backend for Betchya.
 
 - `SupabaseDbDAO` testability
   - `constructor(schema, client?)` allows injecting a fake `SupabaseClient` in unit tests to avoid network/background intervals.
+
+## Endpoints
+
+- **POST /nba/games**
+  - Purpose: Sync games for a single day.
+  - Body: `{ "date"?: "YYYY-MM-DD" }` (optional; defaults to today UTC)
+  - Validation: Strict `YYYY-MM-DD` (zero‑padded) and real calendar date.
+  - Example:
+    ```bash
+    curl -X POST http://localhost:54321/functions/v1/nba/games \
+      -H "Content-Type: application/json" \
+      -d '{"date":"2025-03-01"}'
+    ```
+
+- **POST /nba/games/range**
+  - Purpose: Sync games for an inclusive date range.
+  - Body: `{ "startDate": "YYYY-MM-DD", "endDate": "YYYY-MM-DD" }`
+  - Validation: Strict `YYYY-MM-DD` and real calendar dates; `startDate <= endDate`; max 31 days.
+  - Example:
+    ```bash
+    curl -X POST http://localhost:54321/functions/v1/nba/games/range \
+      -H "Content-Type: application/json" \
+      -d '{"startDate":"2025-03-01","endDate":"2025-03-07"}'
+    ```

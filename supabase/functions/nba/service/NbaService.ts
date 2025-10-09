@@ -63,6 +63,22 @@ class NbaService {
 
     return `Games updated successfully for ${targetDate}.`;
   }
+
+  syncNbaGamesRange = async (startDate: string, endDate: string): Promise<string> => {
+    // Iterate inclusive from startDate to endDate (YYYY-MM-DD)
+    const [sy, sm, sd] = startDate.split("-").map((n) => Number(n));
+    const [ey, em, ed] = endDate.split("-").map((n) => Number(n));
+    let cur = new Date(Date.UTC(sy, sm - 1, sd));
+    const end = new Date(Date.UTC(ey, em - 1, ed));
+
+    while (cur.getTime() <= end.getTime()) {
+      const iso = cur.toISOString().slice(0, 10);
+      await this.syncNbaGameData(iso);
+      // next day UTC
+      cur = new Date(cur.getTime() + 24 * 60 * 60 * 1000);
+    }
+    return `Games updated successfully for range ${startDate} to ${endDate}.`;
+  }
 }
 
 export { NbaService };

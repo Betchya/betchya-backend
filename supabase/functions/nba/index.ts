@@ -32,6 +32,11 @@ const APP = RouterBuilder.builder()
     "/games",
     nbaController.updateGames.bind(nbaController),
   )
+  .withRoute(
+    SupportedHttpMethod.POST,
+    "/games/range",
+    nbaController.updateGamesRange.bind(nbaController),
+  )
   //TODO add other NBA endpoints for handling players, games, etc. as needed
   .build();
 
