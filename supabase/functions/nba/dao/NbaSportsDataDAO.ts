@@ -6,6 +6,7 @@ class NbaSportsDataDAO {
   private apiKey: string;
   private sportsDataDomain: string = "https://api.sportsdata.io";
   private readonly allTeamsEndpoint: URL;
+  private readonly datePattern: RegExp = /^\d{4}-\d{2}-\d{2}$/;
 
   constructor() {
     //TODO Is this just for NBA data, or is it a single client API Key for all SportsData.io data?
@@ -43,8 +44,7 @@ class NbaSportsDataDAO {
    */
   getGamesByDate = async (date: string): Promise<SportsDataGameRO[]> => {
     // Basic validation for YYYY-MM-DD
-    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-    if (!datePattern.test(date)) {
+    if (!this.datePattern.test(date)) {
       throw new Error(`Invalid date format. Expected YYYY-MM-DD, received: ${date}`);
     }
 
