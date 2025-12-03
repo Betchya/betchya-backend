@@ -16,6 +16,7 @@ jobs:
       SUPABASE_URL: http://localhost:54321
       SUPABASE_ANON_KEY: test-anon-key
       SPORTS_DATA_NBA_API_KEY: test-sports-key
+      LOG_LEVEL: warn
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
