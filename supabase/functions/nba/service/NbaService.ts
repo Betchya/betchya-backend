@@ -8,6 +8,7 @@ import { SportsDataGameRO, isValidGame } from "../ro/SportsDataGameRO.ts";
 import { NbaTeamRecord } from "../entity/NbaTeamRecord.ts";
 import { mapSportsDataGameToDBRecord } from "../entity/NbaGameRecord.ts";
 import type { NbaGameRecord } from "../entity/NbaGameRecord.ts";
+import { Logger } from "../../shared/Logger.ts";
 
 class NbaService {
   private sportsDataDAO: NbaSportsDataDAO;
@@ -62,6 +63,31 @@ class NbaService {
     }
 
     return `Games updated successfully for ${targetDate}.`;
+  }
+
+  syncNbaGamesRange = async (startDate: string, endDate: string): Promise<string> => {
+    // Iterate inclusive from startDate to endDate (YYYY-MM-DD)
+    Logger.info("range sync start", { startDate, endDate });
+    const [sy, sm, sd] = startDate.split("-").map((n) => Number(n));
+    const [ey, em, ed] = endDate.split("-").map((n) => Number(n));
+    let cur = new Date(Date.UTC(sy, sm - 1, sd));
+    const end = new Date(Date.UTC(ey, em - 1, ed));
+
+    while (cur.getTime() <= end.getTime()) {
+      const iso = cur.toISOString().slice(0, 10);
+      try {
+        await this.syncNbaGameData(iso);
+      } catch (e) {
+        // Log and rethrow to preserve current fail-fast behavior
+        const msg = e instanceof Error ? e.message : String(e);
+        Logger.warn("range day failed", { date: iso, error: msg });
+        throw e;
+      }
+      // next day UTC
+      cur = new Date(cur.getTime() + 24 * 60 * 60 * 1000);
+    }
+    Logger.info("range sync done", { startDate, endDate });
+    return `Games updated successfully for range ${startDate} to ${endDate}.`;
   }
 }
 
